@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pregunta</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        textarea, input[type="text"] {
+            width: 90%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        p {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        #respuesta {
+            font-weight: normal;
+            color: #007bff;
+        }
+
+        #backHome {
+            background-color: #007bff;
+        }
+
+        #backHome:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>IA: Resolver Pregunta Basado en Contexto</h1>
+
+    <label for="contexto">Ingrese el contexto:</label>
+    <textarea id="contexto" rows="6" cols="50"></textarea>
+
+    <label for="pregunta">Ingrese su pregunta:</label>
+    <input type="text" id="pregunta">
+
+    <button id="enviarPregunta">Enviar</button>
+    <p><strong>Respuesta:</strong> <span id="respuesta"></span></p>
+
+    <button id="backHome">Volver</button>
+
+    <script>
+        document.getElementById('backHome').addEventListener('click', () => {
+            fetch("{{ url_for('index') }}")
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = response.url;
+                    } else {
+                        console.error("Error al cargar la página.");
+                    }
+                })
+                .catch(error => console.error("Error en la solicitud: ", error));
+        });
+
+        document.getElementById('enviarPregunta').addEventListener('click', () => {
+            const contexto = document.getElementById('contexto').value;
+            const pregunta = document.getElementById('pregunta').value;
+
+            if (!contexto || !pregunta) {
+                alert("Por favor, ingrese un contexto y una pregunta.");
+                return;
+            }
+
+            fetch("{{ url_for('resolver_pregunta') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ contexto, pregunta })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.respuesta) {
+                    document.getElementById('respuesta').innerText = data.respuesta;
+                } else {
+                    alert("Error: " + data.error);
+                }
+            })
+            .catch(error => console.error("Error en la solicitud:", error));
+        });
+    </script>
+</body>
+</html>

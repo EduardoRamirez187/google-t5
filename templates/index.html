@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú de Acciones GPT IA 5</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .item {
+            width: 200px;
+            height: 100px;
+            margin: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #traductorButton {
+            background-color: #e0f7fa;
+        }
+
+        #resumenButton {
+            background-color: #e8f5e9;
+        }
+
+        #preguntaButton {
+            background-color: #fff3e0;
+        }
+
+        #generar_preguntaButton {
+            background-color: #ede7f6;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>MENÚ DE ACCIONES GPT IA 5</h1>
+    <div class="container">
+        <div class="item" id="traductorButton">
+            Traducir
+        </div>
+        <div class="item" id="resumenButton">
+            Resumir
+        </div>
+        <div class="item" id="preguntaButton">
+            Pregunta
+        </div>
+        <div class="item" id="generar_preguntaButton">
+            Generar Pregunta
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('traductorButton').addEventListener('click', () => {
+            fetch("{{ url_for('generar_traduccion') }}")
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = response.url;
+                    } else {
+                        console.error("Error al cargar la página.");
+                    }
+                })
+                .catch(error => console.error("Error en la solicitud: ", error));
+        });
+
+        document.getElementById('resumenButton').addEventListener('click', () => {
+            fetch("{{ url_for('generar_resumen') }}")
+                .then(responseUno => {
+                    if (responseUno.ok) {
+                        window.location.href = responseUno.url;
+                    } else {
+                        console.error("Error al cargar la página.");
+                    }
+                })
+                .catch(error => console.error("Error en la solicitud: ", error));
+        });
+
+        document.getElementById('preguntaButton').addEventListener('click', () => {
+            fetch("{{ url_for('resolver_pregunta') }}")
+                .then(responsetwo => {
+                    if (responsetwo.ok) {
+                        window.location.href = responsetwo.url;
+                    } else {
+                        console.error("Error al cargar la página.");
+                    }
+                })
+                .catch(error => console.error("Error en la solicitud: ", error));
+        });
+
+        document.getElementById('generar_preguntaButton').addEventListener('click', () => {
+            fetch("{{ url_for('generate_question') }}")
+                .then(responseThree => {
+                    if (responseThree.ok) {
+                        window.location.href = responseThree.url;
+                    } else {
+                        console.error("Error al cargar la página.");
+                    }
+                })
+                .catch(error => console.error("Error en la solicitud: ", error));
+        })
+    </script>
+</body>
+
+</html>
