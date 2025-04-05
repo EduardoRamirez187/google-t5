@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traductor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        select, textarea {
+            width: 90%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        h2 {
+            margin-top: 20px;
+            color: #333;
+        }
+
+        #resultado {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            width: 90%;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        #backHome {
+            background-color: #007bff;
+        }
+
+        #backHome:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Traductor de Idiomas</h1>
+
+    <label for="idioma_origen">Idioma de origen:</label>
+    <select id="idioma_origen">
+        <option value="English">Inglés</option>
+        <option value="Spanish">Español</option>
+        <option value="French">Francés</option>
+        <option value="German">Alemán</option>
+    </select>
+
+    <label for="idioma_destino">Idioma de destino:</label>
+    <select id="idioma_destino">
+        <option value="Spanish">Español</option>
+        <option value="English">Inglés</option>
+        <option value="French">Francés</option>
+        <option value="German">Alemán</option>
+    </select>
+
+    <br><br>
+
+    <label for="texto">Texto a traducir:</label><br>
+    <textarea id="texto" rows="6" cols="50"></textarea><br><br>
+
+    <button id="traducirBtn">Traducir</button>
+
+    <h2>Traducción:</h2>
+    <p id="resultado"></p>
+    <button id="backHome">Volver</button>
+
+    <script>
+        document.getElementById('backHome').addEventListener('click', () => {
+            fetch("{{ url_for('index') }}")
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = response.url;
+                    } else {
+                        console.error("Error al cargar la pagina.");
+                    }
+                })
+                .catch(error => console.error("Error en la solicitud: ", error));
+        });
+
+        document.getElementById('traducirBtn').addEventListener('click', () => {
+            const texto = document.getElementById('texto').value;
+            const idioma_origen = document.getElementById('idioma_origen').value;
+            const idioma_destino = document.getElementById('idioma_destino').value;
+
+            if (!texto.trim()) {
+                alert("Por favor, introduce un texto para traducir.");
+                return;
+            }
+
+            fetch("{{ url_for('generar_traduccion') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ texto, idioma_origen, idioma_destino })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('resultado').innerText = "Error: " + data.error;
+                } else {
+                    document.getElementById('resultado').innerText = data.traduccion;
+                }
+            })
+            .catch(error => {
+                console.error("Error en la traducción:", error);
+            });
+        });
+    </script>
+</body>
+
+</html>
